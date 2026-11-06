@@ -4,6 +4,14 @@ async function discoverImages(page) {
         const photos = [];
         const logos = [];
 
+        // Extraction et nettoyage du texte brut du DOM
+        const bodyClone = document.body.cloneNode(true);
+        bodyClone.querySelectorAll('script, style, noscript').forEach(el => el.remove());
+        const rawText = bodyClone.innerText ? bodyClone.innerText.replace(/\s+/g, ' ').trim() : '';
+        const title = document.title || '';
+        const metaDescEl = document.querySelector('meta[name="description"]');
+        const metaDescription = metaDescEl ? metaDescEl.content : '';
+
         // Fonction pour identifier si un élément est un logo ou une icône
         const isLogoElement = (el) => {
             if (!el) return false;
@@ -74,7 +82,10 @@ async function discoverImages(page) {
         return {
             allCandidates,
             photos,
-            logos
+            logos,
+            rawText,
+            title,
+            metaDescription
         };
     });
 }
