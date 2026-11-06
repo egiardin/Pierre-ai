@@ -30,9 +30,12 @@ def create_hotel_dossier(slug: str, text_data: dict, media_data: list) -> dict:
         except Exception:
             pass
             
+    magic_link = f"/studio/{token}"
+    
     project_data = {
         "slug": slug,
         "token": token,
+        "magic_link": magic_link,
         "expires_at": expires_at,
         "updated_at": datetime.now(timezone.utc).isoformat(),
         "data": text_data,
@@ -96,7 +99,7 @@ def log_for_google_sheet(dossier: dict):
     slug = dossier.get("slug")
     token = dossier.get("token")
     expires_at = dossier.get("expires_at")
-    magic_link = f"/studio/{token}"
+    magic_link = dossier.get("magic_link", f"/studio/{token}")
     
     payload = {
         "hotel_name": name,
