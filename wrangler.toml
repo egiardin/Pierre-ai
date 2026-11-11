@@ -8,3 +8,8 @@ compatibility_date = "2026-11-11"
 directory = "web/dist"
 binding = "ASSETS"
 not_found_handling = "single-page-application"
+
+[assets]
+directory = "./web/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
