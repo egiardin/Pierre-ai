@@ -12,6 +12,7 @@ venv/
 # Dépendances et artefacts de build du studio
 node_modules/
 dist/
+.wrangler/
 
 # Dossiers de travail du pipeline : données clients, jamais versionnées
 data/

@@ -1,0 +1,10 @@
+name = "pierre-studio"
+main = "worker.js"
+compatibility_date = "2026-11-11"
+
+# Build statique du studio, servi par le Worker. Les routes inconnues
+# retombent sur index.html : studio.pierre-ai.fr/{id} ouvre l'application.
+[assets]
+directory = "dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
