@@ -1,0 +1,8 @@
+{
+  "name": "pierre-ai",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
+  }
+}
