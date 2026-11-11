@@ -16,3 +16,4 @@ dist/
 
 # Dossiers de travail du pipeline : données clients, jamais versionnées
 data/
+!web/src/data/

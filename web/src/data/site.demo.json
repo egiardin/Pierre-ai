@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "slug": "demo",
+  "version": 1,
+  "status": "draft",
+  "pages": [
+    {
+      "id": "home",
+      "sections": [
+        {
+          "id": "hero",
+          "type": "hero",
+          "content": {
+            "title": "Hôtel de démonstration",
+            "intro": "Ceci est la démonstration locale, utilisée quand le compartiment R2 n'est pas joignable.",
+            "cta_label": "Réserver",
+            "cta_url": ""
+          },
+          "media": {
+            "photo_id": "d1",
+            "focal": { "x": 0.5, "y": 0.5 },
+            "ratio": "16:9"
+          }
+        },
+        {
+          "id": "rooms",
+          "type": "rooms",
+          "content": { "title": "Nos chambres" },
+          "items": [
+            { "id": "r1", "title": "Chambre Classique", "text": "18 m², vue jardin.", "photo_id": "d2" },
+            { "id": "r2", "title": "Suite Junior", "text": "32 m², balcon.", "photo_id": "d3" }
+          ]
+        },
+        {
+          "id": "services",
+          "type": "services",
+          "content": { "title": "Services et équipements" },
+          "items": [
+            { "id": "s1", "label": "Wi-Fi gratuit" },
+            { "id": "s2", "label": "Piscine" },
+            { "id": "s3", "label": "Spa" }
+          ]
+        },
+        {
+          "id": "gallery",
+          "type": "gallery",
+          "content": { "title": "Galerie" },
+          "items": [
+            { "id": "g1", "photo_id": "d1" },
+            { "id": "g2", "photo_id": "d2" },
+            { "id": "g3", "photo_id": "d3" },
+            { "id": "g4", "photo_id": "d4" }
+          ]
+        },
+        {
+          "id": "contact",
+          "type": "contact",
+          "content": {
+            "title": "Contact et accès",
+            "address": "1 rue de la Démo, 75001 Paris",
+            "phone": "01 02 03 04 05",
+            "email": "contact@exemple.fr",
+            "booking_url": ""
+          }
+        }
+      ]
+    }
+  ],
+  "media": [
+    {
+      "id": "d1",
+      "file": "https://pub-3302a5690dee441aad1616ab7f1bf4d3.r2.dev/demos/hotel-5terres/images/photo-01.jpg",
+      "width": 1600,
+      "height": 1067,
+      "source": "demo",
+      "status": "demo",
+      "alt": "Façade de l'hôtel"
+    },
+    {
+      "id": "d2",
+      "file": "https://pub-3302a5690dee441aad1616ab7f1bf4d3.r2.dev/demos/hotel-5terres/images/photo-02.jpg",
+      "width": 1600,
+      "height": 1067,
+      "source": "demo",
+      "status": "demo",
+      "alt": "Chambre"
+    },
+    {
+      "id": "d3",
+      "file": "https://pub-3302a5690dee441aad1616ab7f1bf4d3.r2.dev/demos/hotel-5terres/images/photo-03.jpg",
+      "width": 1600,
+      "height": 1067,
+      "source": "demo",
+      "status": "demo",
+      "alt": "Suite"
+    },
+    {
+      "id": "d4",
+      "file": "https://pub-3302a5690dee441aad1616ab7f1bf4d3.r2.dev/demos/hotel-5terres/images/photo-04.jpg",
+      "width": 1600,
+      "height": 1067,
+      "source": "demo",
+      "status": "demo",
+      "alt": "Espace bien-être"
+    }
+  ]
+}
