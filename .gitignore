@@ -1,0 +1,17 @@
+.aider*
+.DS_Store
+
+# Caches et environnements (jamais versionnés)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.local
+
+# Dépendances et artefacts de build du studio
+node_modules/
+dist/
+
+# Dossiers de travail du pipeline : données clients, jamais versionnées
+data/
