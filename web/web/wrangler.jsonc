@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pierre-ai",
+  "compatibility_date": "2026-11-11",
+  "vars": {
+    "VITE_R2_PUBLIC_BASE": "https://pub-3302a5690dee441aad1616ab7f1bf4d3.r2.dev"
+  }
+}
