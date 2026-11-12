@@ -1,0 +1,16 @@
+app = "pierre-backend"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+
+# Disque persistant : les dossiers traites (data/{id}) doivent survivre aux redemarrages.
+[[mounts]]
+  source = "pierre_data"
+  destination = "/app/data"

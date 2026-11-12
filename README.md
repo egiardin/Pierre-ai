@@ -365,38 +365,59 @@ la démonstration locale s'affiche.
 
 ## 11. Brancher Google Sheets
 
-Deux sens de communication.
+Deux sens de communication, prêts à l'emploi via [`scripts/apps_script.gs`](scripts/apps_script.gs).
 
-**A. Le Sheet déclenche un traitement.** Dans *Extensions → Apps Script*, un
-script qui appelle `/import` :
+**Prérequis : le backend doit être en ligne** (le Sheet ne peut pas atteindre
+`localhost`). Voir la section 11.3 — déploiement Docker (Fly.io, Railway…).
 
-```js
-function importer(id, url) {
-  const reponse = UrlFetchApp.fetch("http://localhost:8000/import", {
-    method: "post",
-    contentType: "application/json",
-    headers: { "X-Pipeline-Token": "un-secret-partage" },
-    payload: JSON.stringify({ id: id, url: url }),
-  });
-  Logger.log(reponse.getContentText());
-}
-```
+### 11.1 La feuille
 
-(Appelable depuis un menu, un déclencheur `onEdit`, ou tout autre mécanisme.)
+Nommer la première feuille **`Imports`**, ligne 1 = en-têtes :
 
-**B. Le Sheet reçoit le lien.** Déployer un *Web App* Apps Script qui écrit la
-réponse, puis renseigner son URL dans `PIPELINE_WEBHOOK` :
+| A : ID | B : URL | C : Statut | D : Lien demo |
+|---|---|---|---|
+| `demo-5terres` | `https://5terres-hotel.fr/fr/` | *(laissé vide = nouveau)* | *(rempli auto)* |
 
-```js
-function doPost(e) {
-  const { ID, "lien demo": lien } = JSON.parse(e.postData.contents);
-  const feuille = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Feuille 1");
-  // retrouver la ligne par ID et écrire le lien dans la colonne dédiée
-  return ContentService.createTextOutput("ok");
-}
-```
+### 11.2 L'Apps Script
+
+Dans le Sheet : *Extensions → Apps Script*, coller le contenu de
+[`scripts/apps_script.gs`](scripts/apps_script.gs), puis dans les **propriétés
+du script** (roue dentée) définir :
+
+- `BACKEND_URL` = URL publique du backend (ex. `https://pierre-backend.fly.dev`)
+- `PIPELINE_TOKEN` = même valeur que `PIPELINE_TOKEN` dans le `.env` du backend
+
+Exécuter une fois la fonction **`installer()`** pour poser le déclencheur
+`onEdit`. Ensuite : remplir ID + URL → le script appelle `POST /import` et
+écrit « envoyé » ; quand le traitement est terminé, le backend appelle le
+webhook et le script écrit « prêt » + le lien `https://studio.pierre-ai.fr/{id}`.
+
+Pour le sens retour (backend → Sheet), déployer le script en **Web App**
+(*Déployer → Nouvelle déploiement → Web App*, accès « Tous les utilisateurs ») :
+l'URL en `…/exec` va dans `PIPELINE_WEBHOOK` côté backend.
 
 > Le backend envoie exactement `{"ID": "...", "lien demo": "..."}`.
+
+### 11.3 Déployer le backend en ligne (Docker)
+
+Le dépôt contient un [`Dockerfile`](Dockerfile) (Python 3.12 + Chromium pour
+Playwright) et un [`requirements.txt`](requirements.txt). Exemple avec Fly.io :
+
+```bash
+fly launch --dockerfile Dockerfile --name pierre-backend   # une fois
+fly volumes create pierre_data --size 3 --region cdg        # disque persistant pour data/
+fly secrets set PIPELINE_TOKEN=... R2_ACCOUNT_ID=... R2_ACCESS_KEY_ID=... \
+  R2_SECRET_ACCESS_KEY=... R2_BUCKET_NAME=pierre-demo \
+  R2_PUBLIC_BASE=https://pub-....r2.dev DEMO_BASE=https://studio.pierre-ai.fr \
+  PIPELINE_WEBHOOK=https://script.google.com/macros/s/.../exec
+fly deploy
+```
+
+Le volume est monté sur `/app/data` dans `fly.toml` : sans lui, les dossiers
+traités disparaîtraient au redémarrage et `/pipeline/{id}` renverrait 404.
+
+Ensuite : `BACKEND_URL = https://pierre-backend.fly.dev` dans les propriétés
+du script Apps Script.
 
 ---
 
