@@ -3,10 +3,11 @@ import secrets
 from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
-from fastapi import Body, FastAPI, Header, HTTPException
+from fastapi import Body, FastAPI, Header, HTTPException, Request
 from pydantic import BaseModel
 
 from dossier import get_dossier_by_token
+from payments import PaymentError, PromoInvalide, creer_session, traiter_webhook
 from pipeline import runner, workspace
 
 # Charge le .env s'il existe. À appeler avant de lire les variables plus bas.
@@ -18,7 +19,7 @@ app = FastAPI(title="Pierre-ai Studio API")
 IMPORT_TOKEN = os.environ.get("PIPELINE_TOKEN", "")
 
 # File de traitement : un client à la fois, partagée par tout le service.
-queue = runner.Runner()
+queue = runner.Runner().start()
 
 
 def require_token(token):
@@ -115,3 +116,36 @@ def pipeline_status(id: str, x_pipeline_token: str = Header(default="")):
     if not manifest:
         raise HTTPException(status_code=404, detail="Aucun traitement pour cet identifiant.")
     return manifest
+
+
+class CheckoutRequest(BaseModel):
+    id: str
+    pages: int = 1
+    promo: str = ""
+
+
+@app.post("/checkout")
+def checkout(request: CheckoutRequest):
+    """Crée une session Stripe Checkout pour un dossier de démo.
+
+    Le dossier visé doit exister (R2 ou local) ; le code promo est résolu ici,
+    côté serveur, avant la création de la session.
+    """
+    try:
+        return creer_session(request.id, request.pages, request.promo)
+    except PromoInvalide as error:
+        raise HTTPException(status_code=400, detail=str(error))
+    except PaymentError as error:
+        raise HTTPException(status_code=503, detail=str(error))
+
+
+@app.post("/stripe/webhook")
+async def stripe_webhook(request: Request):
+    """Webhook Stripe signé : confirme le paiement et passe le dossier à « paye »."""
+    payload = await request.body()
+    signature = request.headers.get("stripe-signature", "")
+    try:
+        id = traiter_webhook(payload, signature)
+    except PaymentError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+    return {"ok": True, "id": id}

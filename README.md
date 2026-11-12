@@ -421,7 +421,44 @@ du script Apps Script.
 
 ---
 
-## 12. Tests
+## 12. Paiement Stripe (étape 4 du parcours)
+
+Le bouton **Suivant** du studio mène à la page de paiement
+([`web/src/demo/PaymentPage.tsx`](web/src/demo/PaymentPage.tsx)) : choix du
+nombre de pages, **code de réduction facultatif**, puis redirection vers le
+Checkout Stripe hébergé (la clé secrète ne sort jamais du backend).
+
+Flux : `POST /checkout {id, pages, promo}` → session Stripe → retour
+`{DEMO_BASE}/{id}?paid=1` → webhook signé `POST /stripe/webhook`
+(`checkout.session.completed`) → `demos/{id}/hotel/site.json` passe à
+`status: "paye"` sur R2 ([`payments.py`](payments.py)). Le front relit le
+document en `no-cache`, donc la confirmation s'affiche toute seule.
+
+**Configuration** :
+
+| Variable | Où | Rôle |
+|---|---|---|
+| `STRIPE_SECRET_KEY` | `.env` backend | création des sessions (mode `sk_test_…` d'abord) |
+| `STRIPE_WEBHOOK_SECRET` | `.env` backend | vérification de la signature du webhook |
+| `PRIX_BASE_CENTS` | `.env` backend | tarif par page en centimes (défaut 4900 = 49 €) |
+| `VITE_BACKEND_URL` | build front | ex. `https://pierre-backend.fly.dev` |
+| `VITE_PRIX_BASE_CENTS` | build front | affichage du prix (le montant réel est imposé par le backend) |
+
+**À faire dans le dashboard Stripe** :
+1. Mode test d'abord (clés `sk_test_…` / `pk_test_…`).
+2. *Coupons → Promotion codes* : créer ex. `PIERRE10` (-10 %) — c'est ce que
+   l'hôtelier tape dans le champ « code de réduction » ; un code inconnu est
+   refusé côté serveur (400) avant la création de la session.
+3. *Developers → Webhooks* : ajouter l'endpoint `https://<backend>/stripe/webhook`
+   sur l'événement `checkout.session.completed`, puis copier le secret dans
+   `STRIPE_WEBHOOK_SECRET`.
+
+**Test en local** : `stripe listen --forward-to localhost:8001/stripe/webhook`,
+puis payer avec la carte de test `4242 4242 4242 4242`.
+
+---
+
+## 13. Tests
 
 Pipeline (hors ligne : ni navigateur, ni clé, ni réseau) :
 
@@ -439,11 +476,11 @@ npm run build
 
 ---
 
-## 13. Points ouverts
+## 14. Points ouverts
 
-- Les étapes **4 Paiement**, **5 Mise en ligne** et **6 Dashboard** du parcours
-  sont annoncées dans la page de bienvenue mais **pas encore implémentées** ;
-  le bouton « Suivant » du studio ne mène nulle part pour l'instant.
+- L'étape **5 Mise en ligne** (publication sur le domaine de l'hôtel) et
+  **6 Dashboard** restent à implémenter ; la page « Merci » affichée après le
+  paiement en tient lieu provisoirement.
 - `.env` et `web/.env.local` sont fournis avec les valeurs R2 déjà remplies ; il
   reste à renseigner `PIPELINE_TOKEN` et les deux clés du jeton API R2.
 - `boto3` n'est pas installé par défaut (il n'est chargé qu'au moment de

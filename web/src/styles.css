@@ -1551,6 +1551,67 @@ button {
   padding: 11px 28px;
 }
 
+/* Page de paiement : carte centrée dans le parcours, style Pierre. */
+.demo-pay {
+  width: min(460px, 100%);
+}
+
+.pay-box {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+  padding: 22px;
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  border-radius: 20px;
+  box-shadow: 0 3px 3px rgba(37, 39, 34, 0.02), 0 12px 35px rgba(37, 39, 34, 0.04);
+}
+
+.pay-field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.pay-field select,
+.pay-field input {
+  height: 42px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+}
+
+.pay-total {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.pay-total strong {
+  color: var(--ink);
+  font-size: 19px;
+}
+
+.pay-error {
+  margin: 0;
+  font-size: 13px;
+  color: #b3261e;
+}
+
+.pay-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
 .demo-heading {
   max-width: 660px;
   margin: 0 auto 26px;

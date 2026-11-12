@@ -52,7 +52,9 @@ export async function loadDossier(id: string): Promise<Dossier> {
   const url = siteDocumentUrl(id);
   if (url) {
     try {
-      const response = await fetch(url);
+      // no-cache : le statut « paye » doit être revu après le paiement, même si
+      // une ancienne version du document est encore en cache navigateur.
+      const response = await fetch(url, { cache: "no-cache" });
       if (response.ok) {
         return { id, site: validateSite(await response.json()), demonstration: false };
       }

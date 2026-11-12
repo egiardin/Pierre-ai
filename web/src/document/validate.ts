@@ -23,7 +23,7 @@ export function validateSite(value: unknown): SiteDocument {
   if (typeof doc.version !== "number") {
     throw new Error("site.json : version manquante.");
   }
-  if (doc.status !== "draft" && doc.status !== "published") {
+  if (doc.status !== "draft" && doc.status !== "paye" && doc.status !== "published") {
     throw new Error("site.json : statut invalide.");
   }
   if (!Array.isArray(doc.pages) || doc.pages.length === 0) {

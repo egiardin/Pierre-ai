@@ -9,7 +9,7 @@ durcir d'un seul côté ferait diverger les deux validations.
 """
 
 SCHEMA_VERSION = 1
-STATUSES = ("draft", "published")
+STATUSES = ("draft", "paye", "published")
 
 
 class SiteDocumentError(ValueError):

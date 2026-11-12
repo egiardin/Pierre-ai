@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "source_url": "https://www.domainedubelvedere.com/",
+  "status": "failed",
+  "limit": null,
+  "elapsed_seconds": 4.6,
+  "network_bytes": 0,
+  "requests": 0,
+  "page_count": 0,
+  "pages": [],
+  "candidate_count": 0,
+  "candidates": {},
+  "events": [
+    {
+      "stage": "fatal",
+      "reason": "Error",
+      "message": "BrowserType.launch: Executable doesn't exist at /Users/enzo/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ "
+    }
+  ],
+  "warning": "Contenus et pertinence des photos à confirmer par le propriétaire.",
+  "photos": [],
+  "rejected": [],
+  "photo_count": 0,
+  "original_bytes": 0
+}

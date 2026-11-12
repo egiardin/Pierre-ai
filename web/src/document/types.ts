@@ -115,7 +115,7 @@ export interface SiteDocument {
   slug: string;
   /** Numéro de version du brouillon. Sert plus tard au contrôle de concurrence. */
   version: number;
-  status: "draft" | "published";
+  status: "draft" | "paye" | "published";
   pages: SitePage[];
   media: MediaItem[];
 }
