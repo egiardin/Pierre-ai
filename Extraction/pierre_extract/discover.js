@@ -28,6 +28,10 @@
  for (const m of document.querySelectorAll('meta[property="og:image"],meta[name="twitter:image"]'))
    add(m.content,m,'metadata');
  return {assets, links:[...document.querySelectorAll('a[href]')].map(a=>a.href),
+   anchors:[...document.querySelectorAll('a[href]')]
+     .map(a=>({t:(a.innerText||'').trim().slice(0,120), h:a.href}))
+     .filter(a=>a.h && a.t && !/^(javascript:|mailto:|tel:|data:|#)/i.test(a.h))
+     .slice(0,400),
    title:document.title, text:document.body?.innerText.slice(0,150000)||'',
    description:document.querySelector('meta[name="description"]')?.content||''};
 }

@@ -89,6 +89,8 @@ def extracted():
         "phone": "01 02 03 04 05",
         "amenities": ["Wi-Fi gratuit", "Piscine extérieure"],
         "rooms": [{"name": "Chambre Classique", "description": "18 m²"}],
+        "booking": "https://be.synxis.com/?hotel=42",
+        "booking_links": [{"url": "https://be.synxis.com/?hotel=42", "libelle": "Réserver", "score": 5}],
     }
 
 
@@ -119,6 +121,16 @@ class MappingTests(unittest.TestCase):
         self.assertEqual(sections["contact"]["content"]["phone"], "01 02 03 04 05")
         self.assertEqual(
             sections["contact"]["content"]["address"], "1 rue du Test, 75001 Paris"
+        )
+
+    def test_lien_reservation_branche_sur_le_cta_et_le_contact(self):
+        document, _ = build_document(report(), extracted(), "hotel-test")
+        sections = {section["id"]: section for section in document["pages"][0]["sections"]}
+        self.assertEqual(
+            sections["hero"]["content"]["cta_url"], "https://be.synxis.com/?hotel=42"
+        )
+        self.assertEqual(
+            sections["contact"]["content"]["booking_url"], "https://be.synxis.com/?hotel=42"
         )
 
     def test_rien_n_est_invente(self):

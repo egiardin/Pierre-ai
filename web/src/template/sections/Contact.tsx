@@ -1,5 +1,6 @@
 import EditableText from "../../editor/EditableText";
 import type { ContactSection, MediaItem } from "../../document/types";
+import { useStudio } from "../../studio/studio-context";
 
 interface ContactProps {
   section: ContactSection;
@@ -12,6 +13,7 @@ interface ContactProps {
  * éditables, jamais générées.
  */
 export default function Contact({ section }: ContactProps) {
+  const { mode } = useStudio();
   return (
     <section className="contact">
       <EditableText
@@ -61,6 +63,16 @@ export default function Contact({ section }: ContactProps) {
       >
         Réserver en ligne
       </a>
+      {mode === "edit" && (
+        <p className="contact-booking-url">
+          Lien de réservation :{" "}
+          <EditableText
+            sectionId={section.id}
+            field="booking_url"
+            value={section.content.booking_url}
+          />
+        </p>
+      )}
     </section>
   );
 }

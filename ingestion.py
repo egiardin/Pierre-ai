@@ -124,6 +124,7 @@ def build_document(report, extracted, slug, media=None):
     medi = list(media) if media is not None else extracted_media
     photo_ids = [item["id"] for item in medi]
     first_page = pages[0] if pages else {}
+    booking_url = text(info.get("booking"))
 
     rooms = [
         {
@@ -153,7 +154,7 @@ def build_document(report, extracted, slug, media=None):
                 "title": text(info.get("name")) or text(first_page.get("title")),
                 "intro": text(first_page.get("description")),
                 "cta_label": "Réserver",
-                "cta_url": "",
+                "cta_url": booking_url,
             },
             "media": {
                 "photo_id": photo_ids[0] if photo_ids else "",
@@ -177,7 +178,7 @@ def build_document(report, extracted, slug, media=None):
                 "address": text(info.get("address")),
                 "phone": text(info.get("phone")),
                 "email": text(info.get("email")),
-                "booking_url": "",
+                "booking_url": booking_url,
             },
         },
     ]

@@ -236,6 +236,7 @@ class Collector:
                                 "title": data["title"],
                                 "description": data["description"],
                                 "text": data["text"],
+                                "anchors": data.get("anchors") or [],
                             }
                         )
                         links = data["links"]

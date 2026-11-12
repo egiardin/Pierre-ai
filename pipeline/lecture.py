@@ -398,8 +398,67 @@ def rooms(pages):
     return rows[:MAX_ROOMS]
 
 
+# Domaines de moteurs de réservation connus (IBE tiers, chaînes, éditeurs).
+BOOKING_DOMAINS = (
+    "synxis", "d-edge", "dedge", "reservit", "mirai", "cloudbeds", "amenitiz",
+    "wubook", "siteminder", "hotelinking", "fastbooking", "littleemperors",
+    "channex", "secure-booking", "bookassist", "thehotelsnetwork", "phobs",
+    "roomcloud", "mews", "apaleo", "clockpms",
+    "accor", "marriott", "hilton", "ihg", "bestwestern", "wyndham", "hyatt",
+    "radisson", "choicehotels", "whg", "agoda", "expedia", "booking.com",
+)
+# Sites de réservation de table : utile, mais ce n'est pas le lien « Réserver une chambre ».
+TABLE_DOMAINS = ("lafourchette", "thefork", "opentable", "zenchef", "restolib")
+# Libellés de lien qui mènent à une réservation.
+BOOKING_WORDS = (
+    "réserver", "reserver", "réservation", "reservation",
+    "book", "booking", "disponibilit", "availability",
+)
+
+
+def booking_links(pages):
+    """Liens de réservation repérés parmi les ancres : domaine de moteur, libellé ou chemin.
+
+    Un lien n'est retenu que s'il porte un indice fort (moteur connu, libellé
+    « réserver », chemin /book…). Jamais de lien deviné.
+    """
+    rows, seen = [], set()
+    for page in pages:
+        for anchor in page.get("anchors") or []:
+            href = text(anchor.get("h"))
+            label = text(anchor.get("t"))
+            if not href.startswith(("http://", "https://")):
+                continue
+            parts = urlsplit(href)
+            host = (parts.hostname or "").lower()
+            score = 0
+            if any(domain in host for domain in BOOKING_DOMAINS):
+                score += 3
+            if any(domain in host for domain in TABLE_DOMAINS):
+                score -= 3
+            if label and any(contains(label, word) for word in BOOKING_WORDS):
+                score += 2
+            if re.search(r"reserv|book|disponibilit|availability", host + parts.path.lower()):
+                score += 1
+            if score <= 0:
+                continue
+            key = href.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            rows.append({"url": href, "libelle": label, "score": score})
+    rows.sort(key=lambda row: -row["score"])
+    return rows[:5]
+
+
+def booking(pages):
+    """Le lien de réservation retenu : le candidat le mieux noté, ou chaîne vide."""
+    found = booking_links(pages)
+    return found[0]["url"] if found else ""
+
+
 def read_hotel(report):
-    """Les six informations que le document attend, lues dans la collecte."""
+    """Les informations que le document attend, lues dans la collecte."""
     pages = relevant_pages(report)
     return {
         "name": hotel_name(pages),
@@ -408,4 +467,6 @@ def read_hotel(report):
         "phone": phone(pages),
         "amenities": amenities(pages),
         "rooms": rooms(pages),
+        "booking": booking(pages),
+        "booking_links": booking_links(pages),
     }

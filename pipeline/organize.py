@@ -34,6 +34,12 @@ def find_quote(pages, value, radius=QUOTE_RADIUS):
         haystack = collapse(text(page.get("text")))
         position = haystack.lower().find(needle)
         if position < 0:
+            # Une URL (ex. lien de réservation) n'apparaît pas dans le texte :
+            # elle est cherchée aussi parmi les ancres de la page.
+            for anchor in page.get("anchors") or []:
+                hay = collapse(f"{text(anchor.get('t'))} {text(anchor.get('h'))}")
+                if needle in hay.lower():
+                    return {"page": text(page.get("url")), "extrait": hay[: radius * 2]}
             continue
         start = max(0, position - radius)
         end = min(len(haystack), position + len(needle) + radius)
@@ -97,6 +103,7 @@ def missing(infos):
         ("adresse", "adresse"),
         ("telephone", "telephone"),
         ("email", "email"),
+        ("reservation", "lien_reservation"),
     ):
         if not infos["etablissement"][key]["valeur"]:
             manques.append(label)
@@ -175,7 +182,13 @@ def build_infos(report, extracted, id, photos, logos, debut=None, fin=None):
             "adresse": field(pages, info.get("address")),
             "telephone": field(pages, info.get("phone")),
             "email": field(pages, info.get("email")),
+            "reservation": field(pages, info.get("booking")),
         },
+        "liens_reservation": [
+            field(pages, link.get("url"))
+            for link in (info.get("booking_links") or [])
+            if isinstance(link, dict) and text(link.get("url"))
+        ][:5],
         "presentation": {
             "accroche": field(pages, pages[0].get("description") if pages else ""),
             "texte": verbatim[0] if verbatim else {"valeur": "", "origine": None, "confiance": "absente"},

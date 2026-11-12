@@ -90,6 +90,44 @@ class LectureTests(unittest.TestCase):
             ],
         )
 
+    def test_lien_reservation_repris_des_ancres(self):
+        rapport = {
+            "source_url": "https://cinq-terres.fr/",
+            "pages": [
+                {
+                    "url": "https://cinq-terres.fr/",
+                    "title": "",
+                    "text": "Accueil\nRéserver\nContact\n",
+                    "anchors": [
+                        {"t": "Réserver", "h": "https://be.synxis.com/?hotel=1234"},
+                        {"t": "Nos chambres", "h": "https://cinq-terres.fr/chambres"},
+                        {"t": "Accueil", "h": "https://cinq-terres.fr/"},
+                    ],
+                }
+            ],
+            "photos": [],
+        }
+        info = read_hotel(rapport)
+        self.assertEqual(info["booking"], "https://be.synxis.com/?hotel=1234")
+        self.assertEqual(len(info["booking_links"]), 1)
+
+    def test_lien_reservation_interne_reconnu(self):
+        rapport = {
+            "source_url": "https://cinq-terres.fr/",
+            "pages": [
+                {
+                    "url": "https://cinq-terres.fr/",
+                    "title": "",
+                    "text": "",
+                    "anchors": [
+                        {"t": "Réserver en ligne", "h": "https://cinq-terres.fr/reservation"}
+                    ],
+                }
+            ],
+            "photos": [],
+        }
+        self.assertEqual(read_hotel(rapport)["booking"], "https://cinq-terres.fr/reservation")
+
     def test_rien_n_est_invente_sans_source(self):
         vide = {"source_url": "", "pages": [], "photos": []}
         info = read_hotel(vide)
@@ -102,6 +140,8 @@ class LectureTests(unittest.TestCase):
                 "phone": "",
                 "amenities": [],
                 "rooms": [],
+                "booking": "",
+                "booking_links": [],
             },
         )
 

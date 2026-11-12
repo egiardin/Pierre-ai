@@ -60,6 +60,16 @@ export default function Hero({ section, media }: HeroProps) {
             value={section.content.cta_label}
           />
         </a>
+        {mode === "edit" && (
+          <p className="hero-cta-url">
+            Lien du bouton :{" "}
+            <EditableText
+              sectionId={section.id}
+              field="cta_url"
+              value={section.content.cta_url}
+            />
+          </p>
+        )}
       </div>
     </section>
   );
